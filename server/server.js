@@ -657,13 +657,17 @@ STRICT RULES:
 User message: ${userMessage}`;
 
     const result = await geminiModel.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const response = result.response;
+    const text = await response.text();
+
+    if (!text || text.trim() === "") {
+      throw new Error("No response text generated from AI");
+    }
 
     console.log('✅ Gemini AI response received');
     return text;
   } catch (error) {
-    console.error('❌ Gemini AI Error:', error.message);
+    console.error('❌ Gemini AI Error:', error);
     return null;
   }
 }
@@ -712,13 +716,16 @@ STRICT RULES:
 Generate a natural, intelligent answer:`;
 
     const result = await geminiModel.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
+    const response = result.response;
+    const text = await response.text();
 
+    if (!text || text.trim() === "") {
+      throw new Error("No response text generated from AI");
+    }
     console.log('✅ RAG: Generated natural answer from knowledge context');
     return text;
   } catch (error) {
-    console.error('❌ RAG Gemini Error:', error.message);
+    console.error('❌ RAG Gemini Error:', error);
     return null;
   }
 }
@@ -1264,7 +1271,8 @@ async function scrapeUrl(url) {
     const lib = url.startsWith('https') ? require('https') : require('http');
     lib.get(url, { timeout: 15000, headers: { 'User-Agent': 'Mozilla/5.0 ChatbotTrainer' } }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return scrapeUrl(res.headers.location).then(resolve).catch(reject);
+        scrapeUrl(res.headers.location).then(resolve).catch(reject);
+        return;
       }
       if (res.statusCode < 200 || res.statusCode >= 300) {
         return reject(new Error('HTTP ' + res.statusCode + ' — Site may be blocking bots. Try a public/docs URL instead.'));
@@ -1337,7 +1345,7 @@ app.post('/api/flow', (req, res) => {
 // GET /api/config — Widget loads config on init
 // GET /api/config — Widget loads config on init
 app.get('/api/config', (req, res) => {
-  const { botId, apiKey, hostname, type  } = req.query;
+  const { botId, apiKey, hostname, type } = req.query;
 
   let config;
   if (db && botId && botId !== 'default') {
@@ -1711,7 +1719,7 @@ app.post('/api/knowledge/pdf', async (req, res) => {
           chunk,
           'pdf',
           safeName,
-          { page: i + 1, totalPages: data.numpages },
+          { page: i + 1, totalPages: data.numpage },
           targetBotId
         );
         addedToKB++;
@@ -1733,7 +1741,7 @@ app.post('/api/knowledge/pdf', async (req, res) => {
       addedToKnowledgeBase: addedToKB,
       addedToFAQs: newFaqs.length,
       totalChars: text.length,
-      pages: data.numpages
+      pages: data.numpage
     });
   } catch (err) {
     console.error('PDF parse error:', err.message);
