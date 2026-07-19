@@ -15,10 +15,10 @@ function getEmailConfig() {
   } catch (e) {
     console.warn("⚠️ Could not load server/config.json, using environment overrides or defaults.");
   }
-  
+
   return {
-    enabled: process.env.EMAIL_ENABLED !== undefined 
-      ? (process.env.EMAIL_ENABLED === 'true') 
+    enabled: process.env.EMAIL_ENABLED !== undefined
+      ? (process.env.EMAIL_ENABLED === 'true')
       : (emailCfg.enabled !== false),
     smtpHost: process.env.SMTP_HOST || emailCfg.smtpHost || 'smtp.resend.com',
     smtpPort: process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : (emailCfg.smtpPort || 587),
@@ -48,10 +48,15 @@ if (!emailCfg.smtpPass) {
 
 const transporter = nodemailer.createTransport({
   host: emailCfg.smtpHost,
-  port: emailCfg.smtpPort,
-  secure: emailCfg.smtpPort === 465,
-  auth: { user: emailCfg.smtpUser, pass: emailCfg.smtpPass },
-  tls: { rejectUnauthorized: false }
+  port: parseInt(emailCfg.smtpPort) || 587,
+  secure: false, // 587 
+  auth: {
+    user: emailCfg.smtpUser,
+    pass: emailCfg.smtpPass
+  },
+  tls: {
+    rejectUnauthorized: false
+  }
 });
 
 console.log("Sending test mail via nodemailer...");
