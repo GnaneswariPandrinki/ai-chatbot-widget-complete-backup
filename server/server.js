@@ -2,9 +2,7 @@
 //  AI CHATBOT WIDGET — Backend Server
 //  Express + OpenAI + SQLite for chat history
 // ============================================================
-require('dotenv').config({
-  path: require('path').join(__dirname, '../.env')
-});
+require('dotenv').config();
 console.log("GEMINI KEY:", process.env.GEMINI_API_KEY);
 
 const express = require('express');
