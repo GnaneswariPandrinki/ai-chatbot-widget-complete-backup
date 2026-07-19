@@ -824,10 +824,15 @@ async function sendLeadEmail(lead) {
 
     const transporter = nodemailer.createTransport({
       host: emailCfg.smtpHost,
-      port: emailCfg.smtpPort,
-      secure: emailCfg.smtpPort === 465,
-      auth: { user: emailCfg.smtpUser, pass: emailCfg.smtpPass },
-      tls: { rejectUnauthorized: false }
+      port: parseInt(emailCfg.smtpPort) || 587,
+      secure: false,
+      auth: {
+        user: emailCfg.smtpUser,
+        pass: emailCfg.smtpPass
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
     });
 
     await transporter.sendMail({
@@ -871,13 +876,17 @@ async function sendWelcomeEmail(client, plainPassword, req) {
       return { success: false, error: 'Email notifications disabled or SMTP credentials not configured' };
     }
 
-    console.log(`[EMAIL] Initializing SMTP transporter...`);
     const transporter = nodemailer.createTransport({
       host: emailCfg.smtpHost,
-      port: emailCfg.smtpPort,
-      secure: emailCfg.smtpPort === 465,
-      auth: { user: emailCfg.smtpUser, pass: emailCfg.smtpPass },
-      tls: { rejectUnauthorized: false }
+      port: parseInt(emailCfg.smtpPort) || 587,
+      secure: false,
+      auth: {
+        user: emailCfg.smtpUser,
+        pass: emailCfg.smtpPass
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
     });
 
     // Resolve login URL: Use PUBLIC_URL if specified, otherwise fall back to host headers
@@ -2509,10 +2518,15 @@ app.post('/api/complaint', (req, res) => {
     if (emailCfg.enabled && emailCfg.smtpUser && emailCfg.adminEmail) {
       const transporter = nodemailer.createTransport({
         host: emailCfg.smtpHost,
-        port: emailCfg.smtpPort,
-        secure: emailCfg.smtpPort === 465,
-        auth: { user: emailCfg.smtpUser, pass: emailCfg.smtpPass },
-        tls: { rejectUnauthorized: false }
+        port: parseInt(emailCfg.smtpPort) || 587,
+        secure: false,
+        auth: {
+          user: emailCfg.smtpUser,
+          pass: emailCfg.smtpPass
+        },
+        tls: {
+          rejectUnauthorized: false
+        }
       });
       transporter.sendMail({
         from: `"${config.companyName || 'Chatbot'}" <${emailCfg.senderEmail}>`,
