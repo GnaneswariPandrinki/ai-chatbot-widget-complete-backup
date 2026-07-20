@@ -2658,13 +2658,38 @@ app.post('/api/payment/verify', async (req, res) => {
       }
 
       // Send welcome email with credentials
-      const emailResult = await sendWelcomeEmail({ company_name, email, plan_name: planName, status: 'active' }, password, req);
+      // Send welcome email with credentials
+      let emailResult = { success: false };
+      try {
+        const mailOptions = {
+          from: process.env.EMAIL_USER || 'pandringignaneswari25@gmail.com',
+          to: email,
+          subject: 'Order Confirmed - Your Bot Details & Credentials',
+          html: `
+                    <h2>Order Confirmed!</h2>
+                    <p>Hi <b>${company_name}</b>,</p>
+                    <p>Your <b>${planName}</b> plan setup is complete.</p>
+                    <p><b>Login Credentials:</b></p>
+                    <ul>
+                        <li><b>Email:</b> ${email}</li>
+                        <li><b>Password:</b> ${password}</li>
+                        <li><b>Client ID:</b> ${clientId}</li>
+                    </ul>
+                `
+        };
+
+        const info = await transporter.sendMail(mailOptions);
+        console.log("✅ Email sent successfully:", info.response);
+        emailResult = { success: true };
+      } catch (emailErr) {
+        console.error("❌ Email Sending Error:", emailErr);
+      }
 
       res.json({
         success: true,
         clientId: clientId,
         message: 'Registration successful! Check your email for login credentials.',
-        emailSent: emailResult ? emailResult.success : false
+        emailSent: emailResult.success
       });
     } else {
       // Memory fallback
