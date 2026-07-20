@@ -2662,7 +2662,7 @@ app.post('/api/payment/verify', async (req, res) => {
       try {
         const { Resend } = require('resend');
         // Resend API Key (మనం ఎన్విరాన్మెంట్ నుండి తీసుకుంటున్నాం)
-        const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789');
+        const resend = new Resend(process.env.RESEND_API_KEY || 're_MDzBbsd3_8GDmBGqXRLcFRyURKEZEx382');
 
         const data = await resend.emails.send({
           from: 'onboarding@resend.dev', // Resend ఉచిత డెమో Sender Email
