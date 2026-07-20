@@ -2657,28 +2657,15 @@ app.post('/api/payment/verify', async (req, res) => {
         console.log(`✅ New client registered: ${company_name} (${email}) - Plan ${plan_id} (${planName})`);
       }
 
-      // Send welcome email with credentials
-      // Send welcome email with credentials
+      // Send welcome email with credentials using Resend API
       let emailResult = { success: false };
       try {
-        // Transporter ని ఇక్కడే క్రియేట్ చేస్తున్నాం
-        const nodemailer = require('nodemailer');
-        const transporter = nodemailer.createTransport({
-          host: '64.233.184.108',
-          port: 465,
-          secure: true,
-          servername: 'smtp.gmail.com',
-          auth: {
-            user: process.env.EMAIL_USER || 'pandringignaneswari25@gmail.com',
-            pass: process.env.EMAIL_PASS
-          },
-          tls: {
-            rejectUnauthorized: false
-          }
-        });
+        const { Resend } = require('resend');
+        // Resend API Key (మనం ఎన్విరాన్మెంట్ నుండి తీసుకుంటున్నాం)
+        const resend = new Resend(process.env.RESEND_API_KEY || 're_123456789');
 
-        const mailOptions = {
-          from: process.env.EMAIL_USER || 'pandringignaneswari25@gmail.com',
+        const data = await resend.emails.send({
+          from: 'onboarding@resend.dev', // Resend ఉచిత డెమో Sender Email
           to: email,
           subject: 'Order Confirmed - Your Bot Details & Credentials',
           html: `
@@ -2692,15 +2679,13 @@ app.post('/api/payment/verify', async (req, res) => {
                         <li><b>Client ID:</b> ${clientId}</li>
                     </ul>
                 `
-        };
+        });
 
-        const info = await transporter.sendMail(mailOptions);
-        console.log("✅ Email sent successfully:", info.response);
+        console.log("✅ Email sent successfully via Resend API:", data);
         emailResult = { success: true };
       } catch (emailErr) {
         console.error("❌ Email Sending Error:", emailErr);
       }
-
       res.json({
         success: true,
         clientId: clientId,
