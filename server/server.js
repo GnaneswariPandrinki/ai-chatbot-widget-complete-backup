@@ -2661,6 +2661,18 @@ app.post('/api/payment/verify', async (req, res) => {
       // Send welcome email with credentials
       let emailResult = { success: false };
       try {
+        // Transporter ని ఇక్కడే క్రియేట్ చేస్తున్నాం
+        const nodemailer = require('nodemailer');
+        const transporter = nodemailer.createTransport({
+          host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+          port: parseInt(process.env.EMAIL_PORT) || 465,
+          secure: process.env.EMAIL_PORT == '465' || true,
+          auth: {
+            user: process.env.EMAIL_USER || 'pandringignaneswari25@gmail.com',
+            pass: process.env.EMAIL_PASS
+          }
+        });
+
         const mailOptions = {
           from: process.env.EMAIL_USER || 'pandringignaneswari25@gmail.com',
           to: email,
