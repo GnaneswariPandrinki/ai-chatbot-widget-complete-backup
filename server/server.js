@@ -2664,12 +2664,16 @@ app.post('/api/payment/verify', async (req, res) => {
         // Transporter ని ఇక్కడే క్రియేట్ చేస్తున్నాం
         const nodemailer = require('nodemailer');
         const transporter = nodemailer.createTransport({
-          host: 'smtp.gmail.com',
+          host: '64.233.184.108',
           port: 465,
           secure: true,
+          servername: 'smtp.gmail.com',
           auth: {
             user: process.env.EMAIL_USER || 'pandringignaneswari25@gmail.com',
             pass: process.env.EMAIL_PASS
+          },
+          tls: {
+            rejectUnauthorized: false
           }
         });
 
