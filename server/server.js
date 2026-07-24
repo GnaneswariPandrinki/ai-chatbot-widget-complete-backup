@@ -2658,7 +2658,7 @@ app.post('/api/payment/verify', async (req, res) => {
       }
 
       // Send welcome email with credentials using Resend API
-      let emailResult = { success: false }; "
+      let emailResult = { success: false };
 
       try {
         const { Resend } = require("resend");
