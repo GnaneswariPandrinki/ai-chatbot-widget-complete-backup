@@ -2658,11 +2658,12 @@ app.post('/api/payment/verify', async (req, res) => {
       }
 
       // Send welcome email with credentials using Resend API
-      let emailResult = { success: false };
+      let emailResult = { success: false }; "
+
       try {
-        const { Resend } = require('resend');
+        const { Resend } = require("resend");
         // Resend API Key (మనం ఎన్విరాన్మెంట్ నుండి తీసుకుంటున్నాం)
-        const resend = new Resend(process.env.re_iHoW86Ci_AHQRZ3yfQuqqgEko2J5zBRjy);
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
         const data = await resend.emails.send({
           from: 'onboarding@resend.dev', // Resend ఉచిత డెమో Sender Email
